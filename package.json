@@ -1,0 +1,54 @@
+{
+  "name": "modulus",
+  "author": "Liam Masters",
+  "version": "1.0.0",
+  "keywords": ["pebble-app"],
+  "private": true,
+  "dependencies": {
+    "pebble-clay": "^1.0.4"
+  },
+  "pebble": {
+    "displayName": "modulus",
+    "uuid": "b4eebf4f-b4ce-4b63-8c25-66e2a21a0fce",
+    "sdkVersion": "3",
+    "enableMultiJS": true,
+    "targetPlatforms": [
+      "aplite",
+      "basalt",
+      "chalk",
+      "diorite"
+    ],
+    "watchapp": {
+      "watchface": true
+    },
+    "messageKeys": [
+      "CUR_TEMP",
+      "HIGH_TEMP",
+      "LOW_TEMP",
+      "CONDITIONS",
+      "LOCATION",
+      "UNITS",
+      "UPDATE_INTERVAL",
+      "STEP_GOAL",
+      "MOVE_GOAL",
+      "CAL_GOAL",
+      "THEME",
+      "ACCENT_COLOUR",
+      "OWM_API_KEY",
+      "LOCATION_NAME"
+    ],
+    "resources": {
+      "media": [
+        {
+          "type": "font",
+          "name": "FONT_QUICKSAND_51",
+          "file": "Quicksand-SemiBold.ttf"
+        }
+      ]
+    },
+    "capabilities": [
+      "configurable",
+      "location"
+    ]
+  }
+}
