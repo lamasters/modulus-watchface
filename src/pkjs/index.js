@@ -9,11 +9,11 @@ function weatherIdToIconIndex(weatherId) {
     fog: [45, 48],
     rain: [51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82],
     snow: [71, 73, 75, 77, 85, 86],
-    thunderstorm: [95, 96, 99],
+    storm: [95, 96, 99],
   };
   for (var key in weatherCodes) {
     if (weatherCodes[key].indexOf(weatherId) !== -1) {
-      return Array.from(Object.keys(weatherCodes)).indexOf(key);
+      return Object.keys(weatherCodes).indexOf(key);
     }
   }
 }
@@ -34,7 +34,6 @@ function getLocation(lat, lon, api_key, message) {
   var location_request = new XMLHttpRequest();
   location_request.onload = function () {
     var location_response = JSON.parse(location_request.responseText);
-    console.log("Location info: " + JSON.stringify(location_response));
     message.LOCATION = location_response[0].name;
     sendMessage(message);
   };
@@ -59,7 +58,6 @@ function getWeatherData() {
       var weather_request = new XMLHttpRequest();
       weather_request.onload = function () {
         var weather_response = JSON.parse(weather_request.responseText);
-        console.log("Weather: " + JSON.stringify(weather_response));
 
         var message = {
           CUR_TEMP: Math.round(weather_response.current.temperature_2m),

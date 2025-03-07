@@ -2,13 +2,15 @@
   "name": "modulus",
   "author": "Liam Masters",
   "version": "1.0.0",
-  "keywords": ["pebble-app"],
+  "keywords": [
+    "pebble-app"
+  ],
   "private": true,
   "dependencies": {
     "pebble-clay": "^1.0.4"
   },
   "pebble": {
-    "displayName": "modulus",
+    "displayName": "Modulus",
     "uuid": "b4eebf4f-b4ce-4b63-8c25-66e2a21a0fce",
     "sdkVersion": "3",
     "enableMultiJS": true,
@@ -32,7 +34,7 @@
       "STEP_GOAL",
       "MOVE_GOAL",
       "CAL_GOAL",
-      "THEME",
+      "BACKGROUND_COLOUR",
       "ACCENT_COLOUR",
       "OWM_API_KEY",
       "LOCATION_NAME"
@@ -43,6 +45,41 @@
           "type": "font",
           "name": "FONT_QUICKSAND_51",
           "file": "Quicksand-SemiBold.ttf"
+        },
+        {
+          "type": "font",
+          "name": "FONT_QUICKSAND_15",
+          "file": "Quicksand-SemiBold.ttf"
+        },
+        {
+          "type": "bitmap",
+          "name": "CLEAR",
+          "file": "weather_icons/clear.png"
+        },
+        {
+          "type": "bitmap",
+          "name": "CLOUD",
+          "file": "weather_icons/cloud.png"
+        },
+        {
+          "type": "bitmap",
+          "name": "FOG",
+          "file": "weather_icons/fog.png"
+        },
+        {
+          "type": "bitmap",
+          "name": "RAIN",
+          "file": "weather_icons/rain.png"
+        },
+        {
+          "type": "bitmap",
+          "name": "SNOW",
+          "file": "weather_icons/snow.png"
+        },
+        {
+          "type": "bitmap",
+          "name": "STORM",
+          "file": "weather_icons/storm.png"
         }
       ]
     },
