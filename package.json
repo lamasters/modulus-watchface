@@ -1,7 +1,7 @@
 {
   "name": "modulus",
   "author": "Liam Masters",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "keywords": [
     "pebble-app"
   ],
@@ -42,13 +42,18 @@
       "media": [
         {
           "type": "font",
-          "name": "FONT_QUICKSAND_51",
-          "file": "Quicksand-SemiBold.ttf"
+          "name": "FONT_QUICKSAND_45",
+          "file": "Tomorrow-SemiBold.ttf"
+        },
+        {
+          "type": "font",
+          "name": "FONT_QUICKSAND_21",
+          "file": "Tomorrow-SemiBold.ttf"
         },
         {
           "type": "font",
           "name": "FONT_QUICKSAND_15",
-          "file": "Quicksand-SemiBold.ttf"
+          "file": "Tomorrow-SemiBold.ttf"
         },
         {
           "type": "bitmap",

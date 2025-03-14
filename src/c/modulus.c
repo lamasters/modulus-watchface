@@ -13,7 +13,8 @@ static Layer *s_health_layer;
 static Layer *s_battery_layer;
 static BitmapLayer *s_condition_layer;
 static GBitmap *s_condition_bitmap;
-static GFont quicksand_51;
+static GFont quicksand_45;
+static GFont quicksand_21;
 static GFont quicksand_15;
 static GPath *s_bolt_path = NULL;
 static const GPathInfo BOLT_PATH_INFO = {
@@ -291,7 +292,7 @@ static void main_window_load(Window *window)
   s_time_layer = text_layer_create(GRect(PADDING, 20, bounds.size.w - PADDING * 2, 52));
   text_layer_set_text(s_time_layer, "24");
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentRight);
-  text_layer_set_font(s_time_layer, quicksand_51);
+  text_layer_set_font(s_time_layer, quicksand_45);
   text_layer_set_text_color(s_time_layer, text_color);
   text_layer_set_background_color(s_time_layer, GColorClear);
   layer_add_child(window_layer, text_layer_get_layer(s_time_layer));
@@ -299,7 +300,7 @@ static void main_window_load(Window *window)
   s_day_layer = text_layer_create(GRect(bounds.size.w - text_layer_get_content_size(s_time_layer).w - PADDING, 0, 37, 21));
   text_layer_set_text(s_day_layer, "");
   text_layer_set_text_alignment(s_day_layer, GTextAlignmentRight);
-  text_layer_set_font(s_day_layer, fonts_get_system_font(FONT_KEY_ROBOTO_CONDENSED_21));
+  text_layer_set_font(s_day_layer, quicksand_21);
   text_layer_set_text_color(s_day_layer, accent_color);
   text_layer_set_background_color(s_day_layer, GColorClear);
   layer_add_child(window_layer, text_layer_get_layer(s_day_layer));
@@ -307,7 +308,7 @@ static void main_window_load(Window *window)
   s_date_layer = text_layer_create(GRect(PADDING, 0, bounds.size.w - PADDING * 2, 21));
   text_layer_set_text(s_date_layer, "");
   text_layer_set_text_alignment(s_date_layer, GTextAlignmentRight);
-  text_layer_set_font(s_date_layer, fonts_get_system_font(FONT_KEY_ROBOTO_CONDENSED_21));
+  text_layer_set_font(s_date_layer, quicksand_21);
   text_layer_set_text_color(s_date_layer, text_color);
   text_layer_set_background_color(s_date_layer, GColorClear);
   layer_add_child(window_layer, text_layer_get_layer(s_date_layer));
@@ -381,7 +382,7 @@ static void main_window_unload(Window *window)
   text_layer_destroy(s_time_layer);
   text_layer_destroy(s_day_layer);
   text_layer_destroy(s_date_layer);
-  fonts_unload_custom_font(quicksand_51);
+  fonts_unload_custom_font(quicksand_45);
   fonts_unload_custom_font(quicksand_15);
 }
 
@@ -393,7 +394,8 @@ static void init(void)
                                            .unload = main_window_unload,
                                        });
 
-  quicksand_51 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_QUICKSAND_51));
+  quicksand_45 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_QUICKSAND_45));
+  quicksand_21 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_QUICKSAND_21));
   quicksand_15 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_QUICKSAND_15));
 
   if (persist_exists(MESSAGE_KEY_UPDATE_INTERVAL))
