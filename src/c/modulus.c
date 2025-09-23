@@ -14,7 +14,6 @@ static Layer *s_battery_layer;
 static BitmapLayer *s_condition_layer;
 static GBitmap *s_condition_bitmap;
 static GFont quicksand_45;
-static GFont quicksand_21;
 static GFont quicksand_15;
 static GPath *s_bolt_path = NULL;
 static const GPathInfo BOLT_PATH_INFO = {
@@ -201,7 +200,6 @@ static void update_time()
   static char day_buffer[] = "Mon";
   strftime(day_buffer, sizeof(day_buffer), "%a", tick_time);
   text_layer_set_text(s_day_layer, day_buffer);
-  text_layer_set_size(s_day_layer, text_layer_get_content_size(s_day_layer));
 
   static char date_buffer[] = "01";
   strftime(date_buffer, sizeof(date_buffer), "%d", tick_time);
@@ -300,7 +298,7 @@ static void main_window_load(Window *window)
   s_day_layer = text_layer_create(GRect(bounds.size.w - text_layer_get_content_size(s_time_layer).w - PADDING, 0, 37, 21));
   text_layer_set_text(s_day_layer, "");
   text_layer_set_text_alignment(s_day_layer, GTextAlignmentRight);
-  text_layer_set_font(s_day_layer, quicksand_21);
+  text_layer_set_font(s_day_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
   text_layer_set_text_color(s_day_layer, accent_color);
   text_layer_set_background_color(s_day_layer, GColorClear);
   layer_add_child(window_layer, text_layer_get_layer(s_day_layer));
@@ -308,7 +306,7 @@ static void main_window_load(Window *window)
   s_date_layer = text_layer_create(GRect(PADDING, 0, bounds.size.w - PADDING * 2, 21));
   text_layer_set_text(s_date_layer, "");
   text_layer_set_text_alignment(s_date_layer, GTextAlignmentRight);
-  text_layer_set_font(s_date_layer, quicksand_21);
+  text_layer_set_font(s_date_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
   text_layer_set_text_color(s_date_layer, text_color);
   text_layer_set_background_color(s_date_layer, GColorClear);
   layer_add_child(window_layer, text_layer_get_layer(s_date_layer));
@@ -395,7 +393,6 @@ static void init(void)
                                        });
 
   quicksand_45 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_QUICKSAND_45));
-  quicksand_21 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_QUICKSAND_21));
   quicksand_15 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_QUICKSAND_15));
 
   if (persist_exists(MESSAGE_KEY_UPDATE_INTERVAL))

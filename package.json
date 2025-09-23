@@ -1,7 +1,7 @@
 {
   "name": "modulus",
   "author": "Liam Masters",
-  "version": "1.2.0",
+  "version": "1.22",
   "keywords": [
     "pebble-app"
   ],
@@ -17,7 +17,8 @@
     "targetPlatforms": [
       "aplite",
       "basalt",
-      "diorite"
+      "diorite",
+      "emery"
     ],
     "watchapp": {
       "watchface": true
