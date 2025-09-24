@@ -13,12 +13,15 @@ static Layer *s_health_layer;
 static Layer *s_battery_layer;
 static BitmapLayer *s_condition_layer;
 static GBitmap *s_condition_bitmap;
-static GFont quicksand_45;
-static GFont quicksand_15;
+static GFont tomorrow_62;
+static GFont tomorrow_45;
 static GPath *s_bolt_path = NULL;
 static const GPathInfo BOLT_PATH_INFO = {
     .num_points = 6,
     .points = (GPoint[]){{12, 0}, {11, 10}, {16, 10}, {8, 24}, {9, 14}, {4, 14}}};
+static const GPathInfo BOLT_LARGE_PATH_INFO = {
+    .num_points = 6,
+    .points = (GPoint[]){{18, 0}, {17, 15}, {24, 15}, {12, 36}, {13, 21}, {6, 21}}};
 
 static GColor background_color;
 static GColor text_color;
@@ -50,6 +53,7 @@ static const int32_t WEATHER_ICONS[6] = {
     RESOURCE_ID_SNOW,
     RESOURCE_ID_STORM,
 };
+static int16_t arc_width = PBL_PLATFORM_TYPE_CURRENT == PlatformTypeEmery ? 60 : 41;
 
 static void request_weather()
 {
@@ -223,10 +227,10 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed)
 static void temperature_update_proc(Layer *layer, GContext *ctx)
 {
   graphics_context_set_stroke_width(ctx, 4);
-  graphics_context_set_stroke_color(ctx, accent_color);
-  graphics_draw_circle(ctx, GPoint(20, 20), 18);
+  graphics_context_set_fill_color(ctx, accent_color);
+  graphics_fill_radial(ctx, GRect(0, 0, arc_width, arc_width), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(360));
   graphics_context_set_fill_color(ctx, background_color);
-  graphics_fill_radial(ctx, GRect(0, 0, 41, 41), GOvalScaleModeFitCircle, 6, DEG_TO_TRIGANGLE(127), DEG_TO_TRIGANGLE(233));
+  graphics_fill_radial(ctx, GRect(0, 0, arc_width + 1, arc_width + 1), GOvalScaleModeFitCircle, 7, DEG_TO_TRIGANGLE(127), DEG_TO_TRIGANGLE(233));
   int cur_temp = temperature;
   if (cur_temp < low_temp)
   {
@@ -238,8 +242,8 @@ static void temperature_update_proc(Layer *layer, GContext *ctx)
   }
   float relative_temp = (float)(cur_temp - low_temp) / (float)(high_temp - low_temp);
   float angle = 235 + (485 - 235) * relative_temp;
-  int x = (int)(20 + 18.0 * sin_lookup(DEG_TO_TRIGANGLE(angle)) / TRIG_MAX_RATIO);
-  int y = (int)(20 - 18.0 * cos_lookup(DEG_TO_TRIGANGLE(angle)) / TRIG_MAX_RATIO);
+  int x = (int)(arc_width / 2 + (arc_width / 2 - 2) * sin_lookup(DEG_TO_TRIGANGLE(angle)) / TRIG_MAX_RATIO);
+  int y = (int)(arc_width / 2 - (arc_width / 2 - 2) * cos_lookup(DEG_TO_TRIGANGLE(angle)) / TRIG_MAX_RATIO);
   graphics_context_set_fill_color(ctx, background_color);
   graphics_fill_circle(ctx, GPoint(x, y), 4);
   graphics_context_set_fill_color(ctx, text_color);
@@ -249,16 +253,16 @@ static void temperature_update_proc(Layer *layer, GContext *ctx)
 static void health_update_proc(Layer *layer, GContext *ctx)
 {
   graphics_context_set_fill_color(ctx, GColorDarkGray);
-  graphics_fill_radial(ctx, GRect(0, 0, 41, 41), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(360));
-  graphics_fill_radial(ctx, GRect(7, 7, 27, 27), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(360));
-  graphics_fill_radial(ctx, GRect(14, 14, 13, 13), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(360));
+  graphics_fill_radial(ctx, GRect(0, 0, arc_width, arc_width), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(360));
+  graphics_fill_radial(ctx, GRect(7, 7, arc_width - 14, arc_width - 14), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(360));
+  graphics_fill_radial(ctx, GRect(14, 14, arc_width - 28, arc_width - 28), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(360));
   graphics_context_set_fill_color(ctx, accent_color);
   int step_angle = (int)((float)step_count / (float)step_goal * 360.0);
-  graphics_fill_radial(ctx, GRect(0, 0, 41, 41), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(step_angle));
+  graphics_fill_radial(ctx, GRect(0, 0, arc_width, arc_width), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(step_angle));
   int move_angle = (int)((float)move_minutes / (float)move_goal * 360.0);
-  graphics_fill_radial(ctx, GRect(7, 7, 27, 27), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(move_angle));
+  graphics_fill_radial(ctx, GRect(7, 7, arc_width - 14, arc_width - 14), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(move_angle));
   int active_angle = (int)((float)active_calories / (float)active_goal * 360.0);
-  graphics_fill_radial(ctx, GRect(14, 14, 13, 13), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(active_angle));
+  graphics_fill_radial(ctx, GRect(14, 14, arc_width - 28, arc_width - 28), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(active_angle));
 }
 
 static void battery_update_proc(Layer *layer, GContext *ctx)
@@ -272,7 +276,7 @@ static void battery_update_proc(Layer *layer, GContext *ctx)
     graphics_context_set_fill_color(ctx, GColorSunsetOrange);
   }
   int angle = (int)((float)(100 - battery_level) / 100.0 * 360.0);
-  graphics_fill_radial(ctx, GRect(0, 0, 41, 41), GOvalScaleModeFitCircle, 5, DEG_TO_TRIGANGLE(angle), DEG_TO_TRIGANGLE(360));
+  graphics_fill_radial(ctx, GRect(0, 0, arc_width, arc_width), GOvalScaleModeFitCircle, 5, DEG_TO_TRIGANGLE(angle), DEG_TO_TRIGANGLE(360));
   gpath_draw_filled(ctx, s_bolt_path);
 }
 
@@ -287,15 +291,25 @@ static void main_window_load(Window *window)
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
 
-  s_time_layer = text_layer_create(GRect(PADDING, 20, bounds.size.w - PADDING * 2, 52));
+  int16_t widget_offset = bounds.size.h - arc_width - 10;
+
+  int16_t time_font_size = PBL_PLATFORM_TYPE_CURRENT == PlatformTypeEmery ? 62 : 52;
+  s_time_layer = text_layer_create(GRect(PADDING, 20, bounds.size.w - PADDING * 2, time_font_size));
   text_layer_set_text(s_time_layer, "24");
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentRight);
-  text_layer_set_font(s_time_layer, quicksand_45);
+  if (PBL_PLATFORM_TYPE_CURRENT == PlatformTypeEmery)
+  {
+    text_layer_set_font(s_time_layer, tomorrow_62);
+  }
+  else
+  {
+    text_layer_set_font(s_time_layer, tomorrow_45);
+  }
   text_layer_set_text_color(s_time_layer, text_color);
   text_layer_set_background_color(s_time_layer, GColorClear);
   layer_add_child(window_layer, text_layer_get_layer(s_time_layer));
 
-  s_day_layer = text_layer_create(GRect(bounds.size.w - text_layer_get_content_size(s_time_layer).w - PADDING, 0, 37, 21));
+  s_day_layer = text_layer_create(GRect(bounds.size.w - 60 - PADDING, 0, 40, 21));
   text_layer_set_text(s_day_layer, "");
   text_layer_set_text_alignment(s_day_layer, GTextAlignmentRight);
   text_layer_set_font(s_day_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
@@ -311,26 +325,27 @@ static void main_window_load(Window *window)
   text_layer_set_background_color(s_date_layer, GColorClear);
   layer_add_child(window_layer, text_layer_get_layer(s_date_layer));
 
-  s_condition_layer = bitmap_layer_create(GRect(PADDING + 5, 85, 21, 21));
+  s_condition_layer = bitmap_layer_create(GRect(PADDING + 5, widget_offset - 30, 21, 21));
   s_condition_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[weather_index]);
   bitmap_layer_set_bitmap(s_condition_layer, s_condition_bitmap);
   bitmap_layer_set_alignment(s_condition_layer, GAlignCenter);
   bitmap_layer_set_compositing_mode(s_condition_layer, GCompOpSet);
   layer_add_child(window_layer, bitmap_layer_get_layer(s_condition_layer));
 
-  s_loc_layer = text_layer_create(GRect(PADDING + 30, 85, bounds.size.w - PADDING - 30, 21));
+  s_loc_layer = text_layer_create(GRect(PADDING + 30, widget_offset - 30, bounds.size.w - PADDING - 30, 21));
   text_layer_set_text(s_loc_layer, location);
   text_layer_set_text_alignment(s_loc_layer, GTextAlignmentLeft);
-  text_layer_set_font(s_loc_layer, quicksand_15);
+  text_layer_set_overflow_mode(s_loc_layer, GTextOverflowModeTrailingEllipsis);
+  text_layer_set_font(s_loc_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
   text_layer_set_text_color(s_loc_layer, text_color);
   text_layer_set_background_color(s_loc_layer, GColorClear);
   layer_add_child(window_layer, text_layer_get_layer(s_loc_layer));
 
-  s_temp_arc_layer = layer_create(GRect(PADDING + 1, 115, 41, 41));
+  s_temp_arc_layer = layer_create(GRect(PADDING, widget_offset, arc_width, arc_width));
   layer_set_update_proc(s_temp_arc_layer, temperature_update_proc);
   layer_add_child(window_layer, s_temp_arc_layer);
 
-  s_temperature_layer = text_layer_create(GRect(PADDING + 2, 122, 41, 41));
+  s_temperature_layer = text_layer_create(GRect(PADDING, widget_offset + arc_width / 2 - 18 + 5, arc_width, arc_width));
   text_layer_set_text(s_temperature_layer, "22");
   text_layer_set_text_alignment(s_temperature_layer, GTextAlignmentCenter);
   text_layer_set_font(s_temperature_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
@@ -338,7 +353,7 @@ static void main_window_load(Window *window)
   text_layer_set_background_color(s_temperature_layer, GColorClear);
   layer_add_child(window_layer, text_layer_get_layer(s_temperature_layer));
 
-  s_low_layer = text_layer_create(GRect(PADDING + 8, 145, 20, 15));
+  s_low_layer = text_layer_create(GRect(PADDING + arc_width / 2 - ((arc_width / 2) * 0.7), widget_offset + arc_width - 9, 20, 15));
   text_layer_set_text(s_low_layer, "15");
   text_layer_set_text_alignment(s_low_layer, GTextAlignmentLeft);
   text_layer_set_font(s_low_layer, fonts_get_system_font(FONT_KEY_GOTHIC_09));
@@ -346,7 +361,7 @@ static void main_window_load(Window *window)
   text_layer_set_background_color(s_low_layer, GColorClear);
   layer_add_child(window_layer, text_layer_get_layer(s_low_layer));
 
-  s_high_layer = text_layer_create(GRect(PADDING + 15, 145, 20, 15));
+  s_high_layer = text_layer_create(GRect(PADDING + arc_width - ((arc_width / 2) * 0.7) - 10, widget_offset + arc_width - 9, 20, 15));
   text_layer_set_text(s_high_layer, "25");
   text_layer_set_text_alignment(s_high_layer, GTextAlignmentRight);
   text_layer_set_font(s_high_layer, fonts_get_system_font(FONT_KEY_GOTHIC_09));
@@ -354,13 +369,21 @@ static void main_window_load(Window *window)
   text_layer_set_background_color(s_high_layer, GColorClear);
   layer_add_child(window_layer, text_layer_get_layer(s_high_layer));
 
-  s_health_layer = layer_create(GRect(PADDING * 2 + 41 + 3, 115, 41, 41));
+  s_health_layer = layer_create(GRect(PADDING * 2 + arc_width + 3, widget_offset, arc_width, arc_width));
   layer_set_update_proc(s_health_layer, health_update_proc);
   layer_add_child(window_layer, s_health_layer);
 
-  s_bolt_path = gpath_create(&BOLT_PATH_INFO);
-  gpath_move_to(s_bolt_path, GPoint(10, 8));
-  s_battery_layer = layer_create(GRect(bounds.size.w - PADDING - 41, 115, 41, 41));
+  if (PBL_PLATFORM_TYPE_CURRENT == PlatformTypeEmery)
+  {
+    s_bolt_path = gpath_create(&BOLT_LARGE_PATH_INFO);
+    gpath_move_to(s_bolt_path, GPoint(14, 12));
+  }
+  else
+  {
+    s_bolt_path = gpath_create(&BOLT_PATH_INFO);
+    gpath_move_to(s_bolt_path, GPoint(10, 8));
+  }
+  s_battery_layer = layer_create(GRect(bounds.size.w - PADDING - arc_width, widget_offset, arc_width, arc_width));
   layer_set_update_proc(s_battery_layer, battery_update_proc);
   layer_add_child(window_layer, s_battery_layer);
 }
@@ -380,8 +403,8 @@ static void main_window_unload(Window *window)
   text_layer_destroy(s_time_layer);
   text_layer_destroy(s_day_layer);
   text_layer_destroy(s_date_layer);
-  fonts_unload_custom_font(quicksand_45);
-  fonts_unload_custom_font(quicksand_15);
+  fonts_unload_custom_font(tomorrow_62);
+  fonts_unload_custom_font(tomorrow_45);
 }
 
 static void init(void)
@@ -392,8 +415,8 @@ static void init(void)
                                            .unload = main_window_unload,
                                        });
 
-  quicksand_45 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_QUICKSAND_45));
-  quicksand_15 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_QUICKSAND_15));
+  tomorrow_62 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TOMORROW_62));
+  tomorrow_45 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TOMORROW_45));
 
   if (persist_exists(MESSAGE_KEY_UPDATE_INTERVAL))
   {

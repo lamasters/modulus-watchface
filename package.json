@@ -42,18 +42,15 @@
     "resources": {
       "media": [
         {
+          "characterRegex": "[0-9:]",
           "type": "font",
-          "name": "FONT_QUICKSAND_45",
+          "name": "FONT_TOMORROW_62",
           "file": "Tomorrow-SemiBold.ttf"
         },
         {
+          "characterRegex": "[0-9:]",
           "type": "font",
-          "name": "FONT_QUICKSAND_21",
-          "file": "Tomorrow-SemiBold.ttf"
-        },
-        {
-          "type": "font",
-          "name": "FONT_QUICKSAND_15",
+          "name": "FONT_TOMORROW_45",
           "file": "Tomorrow-SemiBold.ttf"
         },
         {
