@@ -15,6 +15,7 @@ static BitmapLayer *s_condition_layer;
 static GBitmap *s_condition_bitmap;
 static GFont tomorrow_62;
 static GFont tomorrow_45;
+
 static GPath *s_bolt_path = NULL;
 static const GPathInfo BOLT_PATH_INFO = {
     .num_points = 6,
@@ -22,6 +23,21 @@ static const GPathInfo BOLT_PATH_INFO = {
 static const GPathInfo BOLT_LARGE_PATH_INFO = {
     .num_points = 6,
     .points = (GPoint[]){{18, 0}, {17, 15}, {24, 15}, {12, 36}, {13, 21}, {6, 21}}};
+
+static GPath *s_check_path = NULL;
+static const GPathInfo CHECK_PATH_INFO = {
+    .num_points = 10,
+    .points = (GPoint[]){
+        {0, 7},
+        {2, 7},
+        {5, 10},
+        {6, 10},
+        {16, 0},
+        {18, 0},
+        {18, 3},
+        {6, 15},
+        {5, 15},
+        {0, 10}}};
 
 static GColor background_color;
 static GColor text_color;
@@ -249,20 +265,30 @@ static void temperature_update_proc(Layer *layer, GContext *ctx)
 
 static void health_update_proc(Layer *layer, GContext *ctx)
 {
-  // Draw background circles
-  graphics_context_set_fill_color(ctx, GColorDarkGray);
-  graphics_fill_radial(ctx, GRect(0, 0, arc_width, arc_width), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(360));
-  graphics_fill_radial(ctx, GRect(7, 7, arc_width - 14, arc_width - 14), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(360));
-  graphics_fill_radial(ctx, GRect(14, 14, arc_width - 28, arc_width - 28), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(360));
+  if (step_count < step_goal || move_minutes < move_goal || active_calories < active_goal)
+  {
+    // Draw background circles
+    graphics_context_set_fill_color(ctx, GColorDarkGray);
+    graphics_fill_radial(ctx, GRect(0, 0, arc_width, arc_width), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(360));
+    graphics_fill_radial(ctx, GRect(7, 7, arc_width - 14, arc_width - 14), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(360));
+    graphics_fill_radial(ctx, GRect(14, 14, arc_width - 28, arc_width - 28), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(360));
 
-  // Draw progress arcs
-  graphics_context_set_fill_color(ctx, accent_color);
-  float step_angle = ((float)step_count / (float)step_goal * 360.0);
-  graphics_fill_radial(ctx, GRect(0, 0, arc_width, arc_width), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE((int)step_angle));
-  float move_angle = ((float)move_minutes / (float)move_goal * 360.0);
-  graphics_fill_radial(ctx, GRect(7, 7, arc_width - 14, arc_width - 14), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE((int)move_angle));
-  float active_angle = ((float)active_calories / (float)active_goal * 360.0);
-  graphics_fill_radial(ctx, GRect(14, 14, arc_width - 28, arc_width - 28), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE((int)active_angle));
+    // Draw progress arcs
+    graphics_context_set_fill_color(ctx, accent_color);
+    float step_angle = ((float)step_count / (float)step_goal * 360.0);
+    graphics_fill_radial(ctx, GRect(0, 0, arc_width, arc_width), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE((int)step_angle));
+    float move_angle = ((float)move_minutes / (float)move_goal * 360.0);
+    graphics_fill_radial(ctx, GRect(7, 7, arc_width - 14, arc_width - 14), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE((int)move_angle));
+    float active_angle = ((float)active_calories / (float)active_goal * 360.0);
+    graphics_fill_radial(ctx, GRect(14, 14, arc_width - 28, arc_width - 28), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE((int)active_angle));
+  }
+  else
+  {
+    // Draw checkmark
+    graphics_context_set_fill_color(ctx, accent_color);
+    graphics_fill_radial(ctx, GRect(0, 0, arc_width, arc_width), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(360));
+    gpath_draw_filled(ctx, s_check_path);
+  }
 }
 
 static void battery_update_proc(Layer *layer, GContext *ctx)
@@ -373,6 +399,9 @@ static void main_window_load(Window *window)
   layer_set_update_proc(s_health_layer, health_update_proc);
   layer_add_child(window_layer, s_health_layer);
 
+  s_check_path = gpath_create(&CHECK_PATH_INFO);
+  gpath_move_to(s_check_path, GPoint(11, 13));
+
   if (PBL_PLATFORM_TYPE_CURRENT == PlatformTypeEmery)
   {
     s_bolt_path = gpath_create(&BOLT_LARGE_PATH_INFO);
@@ -405,6 +434,8 @@ static void main_window_unload(Window *window)
   text_layer_destroy(s_date_layer);
   fonts_unload_custom_font(tomorrow_62);
   fonts_unload_custom_font(tomorrow_45);
+
+  gpath_destroy(s_check_path);
 }
 
 static void init(void)
