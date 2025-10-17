@@ -46,7 +46,7 @@
         "min": 1000,
         "max": 50000,
         "step": 1000,
-        "description": "The number of steps you want to take each day."
+        "description": "The number of steps you want to take each day. Step progress is displayed on the outer ring."
       },
       {
         "type": "slider",
@@ -56,7 +56,7 @@
         "min": 5,
         "max": 180,
         "step": 5,
-        "description": "The number of minutes you want to be active each day."
+        "description": "The number of minutes you want to be active each day. Move minute progress is displayed on the middle ring."
       },
       {
         "type": "slider",
@@ -66,7 +66,7 @@
         "min": 50,
         "max": 1500,
         "step": 50,
-        "description": "The number of calories you want to burn while active each day."
+        "description": "The number of calories you want to burn while active each day. Active calorie progress is displayed on the inner ring."
       },
       {
         "type": "color",

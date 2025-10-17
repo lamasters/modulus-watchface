@@ -217,10 +217,7 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed)
     request_weather();
   }
   update_time();
-  if (tick_time->tm_min % 5 == 0)
-  {
-    update_health_metrics();
-  }
+  update_health_metrics();
   layer_mark_dirty(s_health_layer);
 }
 
@@ -252,17 +249,20 @@ static void temperature_update_proc(Layer *layer, GContext *ctx)
 
 static void health_update_proc(Layer *layer, GContext *ctx)
 {
+  // Draw background circles
   graphics_context_set_fill_color(ctx, GColorDarkGray);
   graphics_fill_radial(ctx, GRect(0, 0, arc_width, arc_width), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(360));
   graphics_fill_radial(ctx, GRect(7, 7, arc_width - 14, arc_width - 14), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(360));
   graphics_fill_radial(ctx, GRect(14, 14, arc_width - 28, arc_width - 28), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(360));
+
+  // Draw progress arcs
   graphics_context_set_fill_color(ctx, accent_color);
-  int step_angle = (int)((float)step_count / (float)step_goal * 360.0);
-  graphics_fill_radial(ctx, GRect(0, 0, arc_width, arc_width), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(step_angle));
-  int move_angle = (int)((float)move_minutes / (float)move_goal * 360.0);
-  graphics_fill_radial(ctx, GRect(7, 7, arc_width - 14, arc_width - 14), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(move_angle));
-  int active_angle = (int)((float)active_calories / (float)active_goal * 360.0);
-  graphics_fill_radial(ctx, GRect(14, 14, arc_width - 28, arc_width - 28), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(active_angle));
+  float step_angle = ((float)step_count / (float)step_goal * 360.0);
+  graphics_fill_radial(ctx, GRect(0, 0, arc_width, arc_width), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE((int)step_angle));
+  float move_angle = ((float)move_minutes / (float)move_goal * 360.0);
+  graphics_fill_radial(ctx, GRect(7, 7, arc_width - 14, arc_width - 14), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE((int)move_angle));
+  float active_angle = ((float)active_calories / (float)active_goal * 360.0);
+  graphics_fill_radial(ctx, GRect(14, 14, arc_width - 28, arc_width - 28), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE((int)active_angle));
 }
 
 static void battery_update_proc(Layer *layer, GContext *ctx)
@@ -294,7 +294,7 @@ static void main_window_load(Window *window)
   int16_t widget_offset = bounds.size.h - arc_width - 10;
 
   int16_t time_font_size = PBL_PLATFORM_TYPE_CURRENT == PlatformTypeEmery ? 62 : 52;
-  s_time_layer = text_layer_create(GRect(PADDING, 20, bounds.size.w - PADDING * 2, time_font_size));
+  s_time_layer = text_layer_create(GRect(0, 20, bounds.size.w - PADDING, time_font_size));
   text_layer_set_text(s_time_layer, "24");
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentRight);
   if (PBL_PLATFORM_TYPE_CURRENT == PlatformTypeEmery)
