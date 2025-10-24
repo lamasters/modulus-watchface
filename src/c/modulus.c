@@ -372,7 +372,7 @@ static void main_window_load(Window *window)
   layer_add_child(window_layer, s_temp_arc_layer);
 
   s_temperature_layer = text_layer_create(GRect(PADDING, widget_offset + arc_width / 2 - 18 + 5, arc_width, arc_width));
-  text_layer_set_text(s_temperature_layer, "22");
+  text_layer_set_text(s_temperature_layer, "--");
   text_layer_set_text_alignment(s_temperature_layer, GTextAlignmentCenter);
   text_layer_set_font(s_temperature_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
   text_layer_set_text_color(s_temperature_layer, text_color);
@@ -380,7 +380,7 @@ static void main_window_load(Window *window)
   layer_add_child(window_layer, text_layer_get_layer(s_temperature_layer));
 
   s_low_layer = text_layer_create(GRect(PADDING + arc_width / 2 - ((arc_width / 2) * 0.7), widget_offset + arc_width - 9, 20, 15));
-  text_layer_set_text(s_low_layer, "15");
+  text_layer_set_text(s_low_layer, "--");
   text_layer_set_text_alignment(s_low_layer, GTextAlignmentLeft);
   text_layer_set_font(s_low_layer, fonts_get_system_font(FONT_KEY_GOTHIC_09));
   text_layer_set_text_color(s_low_layer, accent_color);
@@ -388,7 +388,7 @@ static void main_window_load(Window *window)
   layer_add_child(window_layer, text_layer_get_layer(s_low_layer));
 
   s_high_layer = text_layer_create(GRect(PADDING + arc_width - ((arc_width / 2) * 0.7) - 10, widget_offset + arc_width - 9, 20, 15));
-  text_layer_set_text(s_high_layer, "25");
+  text_layer_set_text(s_high_layer, "--");
   text_layer_set_text_alignment(s_high_layer, GTextAlignmentRight);
   text_layer_set_font(s_high_layer, fonts_get_system_font(FONT_KEY_GOTHIC_09));
   text_layer_set_text_color(s_high_layer, accent_color);
