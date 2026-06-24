@@ -432,7 +432,9 @@ static void main_window_load(Window *window)
   layer_add_child(window_layer, s_health_layer);
 
   s_check_path = gpath_create(&CHECK_PATH_INFO);
-  gpath_move_to(s_check_path, GPoint(11, 13));
+  const int16_t checkmark_width = 18;
+  const int16_t checkmark_height = 15;
+  gpath_move_to(s_check_path, GPoint((arc_width - checkmark_width) / 2, (arc_width - checkmark_height) / 2));
 
   if (is_emery)
   {
