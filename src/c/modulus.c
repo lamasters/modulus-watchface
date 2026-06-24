@@ -42,6 +42,9 @@ static const GPathInfo CHECK_PATH_INFO = {
 static GColor background_color;
 static GColor text_color;
 static GColor accent_color;
+static GColor health_outer_arc_color;
+static GColor health_middle_arc_color;
+static GColor health_inner_arc_color;
 
 static int32_t step_count = 0;
 static int32_t step_goal = 5000;
@@ -159,6 +162,30 @@ static void inbox_recv_callback(DictionaryIterator *iterator, void *context)
     layer_mark_dirty(s_battery_layer);
   }
 
+  Tuple *health_outer_arc_colour_tuple = dict_find(iterator, MESSAGE_KEY_HEALTH_OUTER_ARC_COLOUR);
+  if (health_outer_arc_colour_tuple)
+  {
+    health_outer_arc_color = GColorFromHEX(health_outer_arc_colour_tuple->value->int32);
+    persist_write_int(MESSAGE_KEY_HEALTH_OUTER_ARC_COLOUR, health_outer_arc_colour_tuple->value->int32);
+    layer_mark_dirty(s_health_layer);
+  }
+
+  Tuple *health_middle_arc_colour_tuple = dict_find(iterator, MESSAGE_KEY_HEALTH_MIDDLE_ARC_COLOUR);
+  if (health_middle_arc_colour_tuple)
+  {
+    health_middle_arc_color = GColorFromHEX(health_middle_arc_colour_tuple->value->int32);
+    persist_write_int(MESSAGE_KEY_HEALTH_MIDDLE_ARC_COLOUR, health_middle_arc_colour_tuple->value->int32);
+    layer_mark_dirty(s_health_layer);
+  }
+
+  Tuple *health_inner_arc_colour_tuple = dict_find(iterator, MESSAGE_KEY_HEALTH_INNER_ARC_COLOUR);
+  if (health_inner_arc_colour_tuple)
+  {
+    health_inner_arc_color = GColorFromHEX(health_inner_arc_colour_tuple->value->int32);
+    persist_write_int(MESSAGE_KEY_HEALTH_INNER_ARC_COLOUR, health_inner_arc_colour_tuple->value->int32);
+    layer_mark_dirty(s_health_layer);
+  }
+
   Tuple *step_goal_tuple = dict_find(iterator, MESSAGE_KEY_STEP_GOAL);
   if (step_goal_tuple)
   {
@@ -274,11 +301,15 @@ static void health_update_proc(Layer *layer, GContext *ctx)
     graphics_fill_radial(ctx, GRect(14, 14, arc_width - 28, arc_width - 28), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE(360));
 
     // Draw progress arcs
-    graphics_context_set_fill_color(ctx, accent_color);
+    graphics_context_set_fill_color(ctx, health_outer_arc_color);
     float step_angle = ((float)step_count / (float)step_goal * 360.0);
     graphics_fill_radial(ctx, GRect(0, 0, arc_width, arc_width), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE((int)step_angle));
+
+    graphics_context_set_fill_color(ctx, health_middle_arc_color);
     float move_angle = ((float)move_minutes / (float)move_goal * 360.0);
     graphics_fill_radial(ctx, GRect(7, 7, arc_width - 14, arc_width - 14), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE((int)move_angle));
+
+    graphics_context_set_fill_color(ctx, health_inner_arc_color);
     float active_angle = ((float)active_calories / (float)active_goal * 360.0);
     graphics_fill_radial(ctx, GRect(14, 14, arc_width - 28, arc_width - 28), GOvalScaleModeFitCircle, 5, 0, DEG_TO_TRIGANGLE((int)active_angle));
   }
@@ -471,6 +502,33 @@ static void init(void)
   else
   {
     accent_color = GColorMediumAquamarine;
+  }
+
+  if (persist_exists(MESSAGE_KEY_HEALTH_OUTER_ARC_COLOUR))
+  {
+    health_outer_arc_color = GColorFromHEX(persist_read_int(MESSAGE_KEY_HEALTH_OUTER_ARC_COLOUR));
+  }
+  else
+  {
+    health_outer_arc_color = accent_color;
+  }
+
+  if (persist_exists(MESSAGE_KEY_HEALTH_MIDDLE_ARC_COLOUR))
+  {
+    health_middle_arc_color = GColorFromHEX(persist_read_int(MESSAGE_KEY_HEALTH_MIDDLE_ARC_COLOUR));
+  }
+  else
+  {
+    health_middle_arc_color = accent_color;
+  }
+
+  if (persist_exists(MESSAGE_KEY_HEALTH_INNER_ARC_COLOUR))
+  {
+    health_inner_arc_color = GColorFromHEX(persist_read_int(MESSAGE_KEY_HEALTH_INNER_ARC_COLOUR));
+  }
+  else
+  {
+    health_inner_arc_color = accent_color;
   }
   if (persist_exists(MESSAGE_KEY_STEP_GOAL))
   {

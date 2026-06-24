@@ -82,6 +82,27 @@
         "label": "Accent Colour",
         "sunlight": true
       },
+      {
+        "type": "color",
+        "messageKey": "HEALTH_OUTER_ARC_COLOUR",
+        "defaultValue": "0x55FFAA",
+        "label": "Outer Health Arc Colour (Steps)",
+        "sunlight": true
+      },
+      {
+        "type": "color",
+        "messageKey": "HEALTH_MIDDLE_ARC_COLOUR",
+        "defaultValue": "0x55FFAA",
+        "label": "Middle Health Arc Colour (Move Minutes)",
+        "sunlight": true
+      },
+      {
+        "type": "color",
+        "messageKey": "HEALTH_INNER_ARC_COLOUR",
+        "defaultValue": "0x55FFAA",
+        "label": "Inner Health Arc Colour (Active Calories)",
+        "sunlight": true
+      },
       { "type": "submit", "defaultValue": "Save" }
     ]
   }
